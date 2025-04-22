@@ -1,0 +1,24 @@
+# Configuração da fonte de dados de transações
+source:
+  sourceDefinitionId: "778daa7c-feaf-4db6-96f3-70fd645acc77"  # File Source
+  name: "json_transactions"
+  connectionConfiguration:
+    dataset_name: "transactions"
+    format: "json"
+    url: "gs://saudebliss-source-files/transactions.json"
+    provider:
+      storage: "GCS"
+      service_account_json: "${SERVICE_ACCOUNT_JSON}"
+      gcs_bucket: "saudebliss-source-files"
+      gcs_path: "transactions.json"
+    schema: "{
+      \"type\": \"object\",
+      \"properties\": {
+        \"transaction_id\": {\"type\": \"string\"},
+        \"customer_id\": {\"type\": \"string\"},
+        \"transaction_date\": {\"type\": \"string\", \"format\": \"date\"},
+        \"amount\": {\"type\": \"number\"},
+        \"status\": {\"type\": \"string\"},
+        \"due_date\": {\"type\": \"string\", \"format\": \"date\"}
+      }
+    }"

@@ -1,0 +1,24 @@
+# Configuração da fonte de dados de pagamentos
+source:
+  sourceDefinitionId: "778daa7c-feaf-4db6-96f3-70fd645acc77"  # File Source
+  name: "json_payments"
+  connectionConfiguration:
+    dataset_name: "payments"
+    format: "json"
+    url: "gs://saudebliss-source-files/payments.json"
+    provider:
+      storage: "GCS"
+      service_account_json: "${SERVICE_ACCOUNT_JSON}"
+      gcs_bucket: "saudebliss-source-files"
+      gcs_path: "payments.json"
+    schema: "{
+      \"type\": \"object\",
+      \"properties\": {
+        \"payment_id\": {\"type\": \"string\"},
+        \"transaction_id\": {\"type\": \"string\"},
+        \"payment_date\": {\"type\": \"string\", \"format\": \"date\"},
+        \"payment_amount\": {\"type\": \"number\"},
+        \"payment_method\": {\"type\": \"string\"},
+        \"status\": {\"type\": \"string\"}
+      }
+    }"

@@ -1,0 +1,119 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "transactions",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "transaction_id"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "O ID da transação é obrigatório e não pode ser nulo."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "customer_id"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "O ID do cliente é obrigatório e não pode ser nulo."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "transaction_date"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "A data da transação é obrigatória e não pode ser nula."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "value"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "O valor da transação é obrigatório e não pode ser nulo."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "transaction_id",
+        "type_": "str"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "value",
+        "type_": "float"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "transaction_id"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "Os IDs de transação devem ser únicos."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "value",
+        "min_value": 0,
+        "mostly": 0.99
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "O valor da transação geralmente deve ser maior que zero."
+        }
+      }
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.15.47",
+    "columns": {
+      "transaction_id": {
+        "description": "Identificador único da transação"
+      },
+      "customer_id": {
+        "description": "Identificador do cliente",
+        "sensitivity": "PII"
+      },
+      "transaction_date": {
+        "description": "Data e hora da transação"
+      },
+      "value": {
+        "description": "Valor da transação"
+      },
+      "due_date": {
+        "description": "Data de vencimento da transação"
+      }
+    },
+    "notes": {
+      "format": "markdown",
+      "content": "Esta suíte de expectativas valida os dados de transações para garantir qualidade antes do processamento."
+    }
+  }
+}

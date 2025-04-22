@@ -1,0 +1,122 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "payments",
+  "expectations": [
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "payment_id"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "O ID do pagamento é obrigatório e não pode ser nulo."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "transaction_id"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "O ID da transação associada é obrigatório e não pode ser nulo."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "payment_date"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "A data do pagamento é obrigatória e não pode ser nula."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "value"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "O valor do pagamento é obrigatório e não pode ser nulo."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "payment_id",
+        "type_": "str"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "transaction_id",
+        "type_": "str"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_of_type",
+      "kwargs": {
+        "column": "value",
+        "type_": "float"
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "payment_id"
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "Os IDs de pagamento devem ser únicos."
+        }
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "value",
+        "min_value": 0,
+        "mostly": 0.99
+      },
+      "meta": {
+        "notes": {
+          "format": "markdown",
+          "content": "O valor do pagamento geralmente deve ser maior que zero."
+        }
+      }
+    }
+  ],
+  "meta": {
+    "great_expectations_version": "0.15.47",
+    "columns": {
+      "payment_id": {
+        "description": "Identificador único do pagamento"
+      },
+      "transaction_id": {
+        "description": "Identificador da transação associada ao pagamento"
+      },
+      "payment_date": {
+        "description": "Data do pagamento"
+      },
+      "value": {
+        "description": "Valor do pagamento"
+      }
+    },
+    "notes": {
+      "format": "markdown",
+      "content": "Esta suíte de expectativas valida os dados de pagamentos para garantir qualidade antes do processamento."
+    }
+  }
+}
