@@ -178,6 +178,23 @@ class LandingToBronzeProcessor:
                 most_recent = blob
         return most_recent
 
+    # Modificando para lidar com arquivos JSON
+    def find_json_files(self, bucket, prefix):
+        """Encontra arquivos JSON no diretório especificado."""
+        blobs = list(bucket.list_blobs(prefix=prefix))
+        return [blob for blob in blobs if blob.name.endswith('.json')]
+
+    def get_most_recent_json(self, json_files):
+        """Retorna o arquivo JSON mais recente com base na data de atualização."""
+        if not json_files:
+            return None
+        
+        most_recent = json_files[0]
+        for blob in json_files:
+            if blob.updated > most_recent.updated:
+                most_recent = blob
+        return most_recent
+
     def get_file_metadata(self, blob):
         """Extrair metadados do arquivo para rastreabilidade."""
         return {
@@ -304,7 +321,7 @@ class LandingToBronzeProcessor:
 
     def process(self):
         """
-        Função principal para processar os arquivos Parquet do Airbyte para Iceberg.
+        Função principal para processar os arquivos JSON para Iceberg.
         Realiza a descoberta dos arquivos, validação, transformação e escrita dos dados.
         """
         try:
@@ -315,23 +332,44 @@ class LandingToBronzeProcessor:
             client = storage.Client()
             bucket = client.bucket(self.bucket_name)
             
-            # Encontra arquivos Parquet na landing zone
+            # Primeiro tentamos encontrar arquivos Parquet
             parquet_files = self.find_parquet_files(bucket, self.landing_path)
             
+            # Se não houver arquivos Parquet, tentamos encontrar arquivos JSON
             if not parquet_files:
-                self.process_info["status"] = "CONCLUÍDO"
-                self.process_info["error_message"] = "Nenhum arquivo encontrado para processamento"
-                self.logger.info("Nenhum arquivo Parquet encontrado para processamento")
-                self.process_info["file_discovery_end"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                return
+                self.logger.info("Nenhum arquivo Parquet encontrado. Buscando arquivos JSON...")
+                json_files = self.find_json_files(bucket, self.landing_path)
                 
-            # Obtém o arquivo mais recente
-            source_blob = self.get_most_recent_parquet(parquet_files)
-            source_path = f"gs://{self.bucket_name}/{source_blob.name}"
+                if not json_files:
+                    # Verifica se o arquivo específico existe na raiz do projeto
+                    file_name = f"{self.entity_name}.json"
+                    self.logger.info(f"Tentando encontrar arquivo {file_name} na raiz do projeto...")
+                    
+                    # Caminho direto para o arquivo JSON na raiz
+                    direct_path = file_name
+                    source_path = direct_path
+                    
+                    # Verifica se o arquivo existe
+                    import os
+                    if not os.path.exists(direct_path):
+                        self.process_info["status"] = "CONCLUÍDO"
+                        self.process_info["error_message"] = "Nenhum arquivo encontrado para processamento"
+                        self.logger.info(f"Arquivo {direct_path} não encontrado")
+                        self.process_info["file_discovery_end"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        return
+                    
+                    self.logger.info(f"Arquivo encontrado: {source_path}")
+                else:
+                    # Obtém o arquivo JSON mais recente
+                    source_blob = self.get_most_recent_json(json_files)
+                    source_path = f"gs://{self.bucket_name}/{source_blob.name}"
+                    self.logger.info(f"Arquivo JSON encontrado: {source_path}")
+            else:
+                # Obtém o arquivo Parquet mais recente
+                source_blob = self.get_most_recent_parquet(parquet_files)
+                source_path = f"gs://{self.bucket_name}/{source_blob.name}"
+                self.logger.info(f"Arquivo Parquet encontrado: {source_path}")
             
-            # Extrai metadados do arquivo
-            file_metadata = self.get_file_metadata(source_blob)
-            self.logger.info(f"Arquivo encontrado: {source_path}")
             self.process_info["file_discovery_end"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             
             # 2. Validação de esquema
